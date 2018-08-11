@@ -5,31 +5,45 @@
 </header>
 <main class="container">
 
+  <div class="row" *ngIf="mensagem.texto">
+    <div class="col-12">
+      <caelumpic-mensagem [texto]="mensagem.texto" [tipo]="mensagem.tipo"></caelumpic-mensagem>
+    </div>
+  </div>
+
   <div class="row">
-    <form class="col-md-7 mb-4" (ngSubmit)="salvar()">
-      <h2>{{foto.titulo}}</h2>
-      
+    <form [formGroup]="formCadastro" class="col-md-7 mb-4" (ngSubmit)="salvar()">
+
       <div class="form-group">
-        <label for="">Titulo</label>
-        <input [(ngModel)]="foto.titulo" name="titulo" type="text" class="form-control">
+        <label for="">Titulo*</label>
+        <input (input)="foto.titulo = titulo.value" required formControlName="titulo" type="text" class="form-control">
+        
+        <div *ngIf="titulo.errors && titulo.touched">
+          <caelumpic-mensagem *ngIf="titulo.errors.required" tipo="danger" texto="Titulo obrigatório"></caelumpic-mensagem>
+          <caelumpic-mensagem *ngIf="titulo.errors.minlength" texto="Digite pelo menos 5 carecteres" tipo="danger"></caelumpic-mensagem>
+        </div>
       </div>
 
       <div class="form-group">
-        <label for="">URL</label>
-        <input [(ngModel)]="foto.url" name="url" type="text" class="form-control">
+        <label for="">URL*</label>
+        <input (input)="foto.url = url.value" required formControlName="url" type="text" class="form-control">
+        <caelumpic-mensagem *ngIf="formCadastro.controls.url.invalid && formCadastro.controls.url.touched" tipo="danger" texto="URL obrigatória"></caelumpic-mensagem>
       </div>
 
       <div class="form-group">
         <label for="">Descrição</label>
-        <textarea [(ngModel)]="foto.descricao" name="descricao" class="form-control"></textarea>
+        <textarea (input)="foto.descricao = descricao.value" formControlName="descricao" class="form-control"></textarea>
       </div>
 
       <a routerLink="" class="btn btn-secondary mr-2">Listagem</a>
-      <button class="btn btn-primary">Salvar</button>
+      <button [disabled]="formCadastro.invalid" class="btn btn-primary">Salvar</button>
 
     </form>
     <aside class="col-md-5">
       <h2>Preview</h2>
+      <caelumpic-card [foto]="foto" *ngIf="url.value">
+        <foto [titulo]="titulo.value" [url]="url.value" class="foto"></foto>
+      </caelumpic-card>
     </aside>
   </div>
 </main>

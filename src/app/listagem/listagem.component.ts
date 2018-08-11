@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FotoService } from '../foto/foto.service';
+import { Foto } from '../foto/foto';
 
 @Component({
   selector: 'caelumpic-listagem',
@@ -8,19 +9,41 @@ import { FotoService } from '../foto/foto.service';
 })
 export class ListagemComponent implements OnInit {
 
-  listaFotos
+  listaFotos: Foto[] = []
 
-  constructor(servico: FotoService) {
+  constructor(private servico: FotoService) {
 
-      servico.listar()
-      .subscribe(
-        (fotosApi) => {
-          this.listaFotos = fotosApi
-        }
-      )
+      this.servico.listar()
+        .subscribe(
+          (fotosApi) => {
+            this.listaFotos = fotosApi
+          }
+        )
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
+  apagar(fotoApagada: Foto){
+    this.servico
+        .deletar(fotoApagada)
+        .subscribe(
+          () => {
+            /*
+            this.listaFotos = this.listaFotos
+                                  .filter(foto => {
+                                      if(foto != fotoApagada) {
+                                        return foto
+                                      }
+                                  })
+            */
+
+            this.listaFotos = this.listaFotos.filter( foto => foto != fotoApagada)
+
+            
+          }
+          ,erro => console.log(erro)
+          
+        )
+    
+  }
 }
